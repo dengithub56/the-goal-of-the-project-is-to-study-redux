@@ -1,17 +1,49 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import ReactDOM from 'react-dom'
+import { createStore } from 'redux'
+import { Provider, useSelector, useDispatch } from 'react-redux'
+
+const initialState = {
+  name: 'JSON',
+}
+const reducer = (state = initialState, action) => {
+  switch (action.type) {
+    case 'ADD_NAME':
+      return {
+        ...state,
+        ...action.payload,
+      }
+    default:
+      return state
+  }
+}
+const store = createStore(reducer)
+
+const setName = name => ({
+  type: 'ADD_NAME',
+  payload: name,
+})
+
+const App = () => {
+  const outState = useSelector(state => state.name)
+  return <h1>{outState}</h1>
+}
+
+const View = () => {
+  const dispatch = useDispatch()
+  const changeName = () => {
+    dispatch(
+      setName({
+        name: 'HTML',
+      })
+    )
+  }
+  return <button onClick={changeName}>ENTER</button>
+}
 
 ReactDOM.render(
-  <React.StrictMode>
+  <Provider store={store}>
     <App />
-  </React.StrictMode>,
+    <View />
+  </Provider>,
   document.getElementById('root')
-);
-
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
+)
